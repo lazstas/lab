@@ -1,0 +1,176 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Reflection;
+namespace лаба6
+{
+    delegate int PlusOrMinus(int p1, int p2);
+    class MainClass
+    {
+        static int Plus(int p1, int p2)
+        {
+            return p1 + p2;
+        }
+        static int Minus(int p1, int p2)
+        {
+            return p1 - p2;
+        }
+        static void PlusOrMinusMethodFunc(string str, int i1, int i2, Func<int, int, int> PlusOrMinusParam)
+        {
+            int Result = PlusOrMinusParam(i1, i2);
+            Console.WriteLine(str + Result.ToString());
+        }
+        static void PlusOrMinusMethod(string str, int i1, int i2, PlusOrMinus PlusOrMinusParam)
+        {
+            int Result = PlusOrMinusParam(i1, i2);
+            Console.WriteLine(str + Result.ToString());
+        }
+        public static void Main(string[] args)
+        {
+            int i1 = 3;
+            int i2 = 2;
+            PlusOrMinusMethod("plus", i1, i2, Plus);
+            PlusOrMinusMethod("minus", i1, i2, Minus);
+            PlusOrMinus pm1 = new PlusOrMinus(Plus);
+            PlusOrMinusMethod("Создание экземпляра метода", i1, i2, pm1);
+            PlusOrMinus pm2 = Plus;
+            PlusOrMinusMethod("Создание экземпляра метода, основанного на предположения делегата", i1, i2, pm2);
+            PlusOrMinus pm3 = delegate(int param1, int param2)
+            {
+                return param1 + param2;
+            };
+            PlusOrMinusMethod("Создание экземпляра делегата, основанного на анонимного метода", i1, i2, pm2);
+            PlusOrMinusMethod("Создание экземпляра делегата, основанного на лямбда выражении 1", i1, i2,
+                              (int x, int y) =>
+                              {
+                                  int z = x + y;
+                                  return z;
+                              });
+            PlusOrMinusMethod("Создание экземпляра делегата, основанного на лямбда выражении 2", i1, i2, (x, y) =>
+            { return x + y; });
+            PlusOrMinusMethod("Создание экземпляра делегата, основанного на лямбда выражении 3", i1, i2, (x, y) =>
+           x + y);
+
+            Console.WriteLine("пример");
+            Action<int, int> a1 = (x, y) => { Console.WriteLine("", x, y, x + y); };
+            Action<int, int> a2 = (x, y) => { Console.WriteLine("", x, y, x - y); };
+            Action<int, int> group = a1 + a2;
+            group(5, 3);
+            Action<int, int> group2 = a1;
+            //
+            group2 += a2;
+            group2(10, 5);
+            //
+            group2 -= a1;
+            group2(20, 10);
+
+
+            Console.WriteLine("\n\nИспользование обощенного делегата Func<>");
+            PlusOrMinusMethodFunc("Создание экземпляра делегата на основе метода:", i1, i2, Plus);
+            string OuterString = "ВНЕШНЯЯ ПЕРЕМЕННАЯ";
+            PlusOrMinusMethodFunc("Создание экземпляра делегата на основе лямбда-выражения 1: ", i1, i2,
+                (int x, int y) =>
+                {
+                    Console.WriteLine("Эта переменная объявлена вне лямбда-выражения: " + OuterString);
+                    int z = x + y;
+                    return z;
+                }
+                );
+            PlusOrMinusMethodFunc("Создание экземпляра делегата на основе лямбда-выражения 2: ", i1, i2,
+                (x, y) =>
+                {
+                    return x + y;
+                }
+                );
+            PlusOrMinusMethodFunc("Создание экземпляра делегата на основе лямбда-выражения 3: ", i1, i2, (x, y) => x + y);
+            ////////////////////////////////////////////////
+
+
+            ////////////////////////////////////////////////
+            Type t = typeof(ForInspection);
+            Console.WriteLine("Тип " + t.FullName + " унаследован от " + t.BaseType.FullName);
+            Console.WriteLine("Пространство имен " + t.Namespace);
+            Console.WriteLine("Находится в сборке " + t.AssemblyQualifiedName);
+            Console.WriteLine("\nКонструкторы:");
+            foreach (var x in t.GetConstructors())
+            {
+                Console.WriteLine(x);
+            }
+            Console.WriteLine("\nМетоды:");
+            foreach (var x in t.GetMethods())
+            {
+                Console.WriteLine(x);
+            }
+            Console.WriteLine("\nСвойства:");
+            foreach (var x in t.GetProperties())
+            {
+                Console.WriteLine(x);
+            }
+            Console.WriteLine("\nПоля данных (public):");
+            foreach (var x in t.GetFields())
+            {
+                Console.WriteLine(x);
+            }
+            Console.WriteLine("\nСвойства, помеченные атрибутом:");
+            foreach (var x in t.GetProperties())
+            {
+                object attrObj;
+                if (GetPropertyAttribute(x, typeof(NewAttribute), out attrObj))
+                {
+                    NewAttribute attr = attrObj as NewAttribute;
+                    Console.WriteLine(x.Name + " - " + attr.Description);
+                }
+            }
+            Console.WriteLine("\nВызов метода:");
+            ForInspection fi = (ForInspection)t.InvokeMember(null, BindingFlags.CreateInstance, null, null, new object[] { });
+            object[] parameters = new object[] { 3, 2 };
+            object Result = t.InvokeMember("Plus", BindingFlags.InvokeMethod,
+null, fi, parameters);
+            Console.WriteLine("Plus(3,2)={0}", Result);
+            Console.ReadLine();
+        }
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+        public class NewAttribute : Attribute
+        {
+            public NewAttribute() { }
+            public NewAttribute(string DescriptionParam)
+            {
+                Description = DescriptionParam;
+            }
+            public string Description { get; set; }
+        }
+        public class ForInspection
+        {
+            public ForInspection() { }
+            public ForInspection(int i) { }
+            public ForInspection(string str) { }
+            public int Plus(int x, int y) { return x + y; }
+            public int Minus(int x, int y) { return x - y; }
+            [NewAttribute("Описание для property1")]
+            public string property1
+            {
+                get { return _property1; }
+                set { _property1 = value; }
+            }
+            private string _property1;
+            public int property2 { get; set; }
+            [NewAttribute(Description = "Описание для property3")]
+            public double property3 { get; private set; }
+            public int field1;
+            public float field2;
+        }
+        public static bool GetPropertyAttribute(PropertyInfo checkType, Type attributeType, out object attribute)
+        {
+            bool Result = false;
+            attribute = null;
+            var isAttribute = checkType.GetCustomAttributes(attributeType, false);
+            if (isAttribute.Length > 0)
+            {
+                Result = true;
+                attribute = isAttribute[0];
+            }
+            return Result;
+        }
+    }
+}
