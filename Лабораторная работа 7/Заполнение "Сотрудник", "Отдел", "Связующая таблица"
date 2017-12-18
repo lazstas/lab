@@ -1,0 +1,35 @@
+ static List<Worker> worker = new List<Worker>(){
+            new Worker(1,"Oleg",1),
+            new Worker(2,"Kolya",2),
+            new Worker(3,"BOrya",3),
+            new Worker(4,"Pasha",2),
+            new Worker(5,"Savveliy",2),
+            new Worker(6,"Rokesh",4),
+            new Worker(7,"Alin",6),
+            new Worker(8,"Alex",6),
+            new Worker(9,"Hackerman",3),
+            new Worker(10,"Inga",4),
+            new Worker(11,"Gorshok",2),
+            new Worker(12,"Ira",4),
+            new Worker(13,"GUDBOI",4),
+            new Worker(14,"Kolbasa",5),
+            new Worker(15,"Bono",3),
+            new Worker(16,"Mono",5),
+        };
+        static List<Unit> unit = new List<Unit>(){
+            new Unit(1,"CEO"),
+            new Unit(2,"SMM"),
+            new Unit(3,"Dev"),
+            new Unit(4,"Support"),
+            new Unit(5,"PR"),
+            new Unit(6,"HR"),
+        };
+        static List<WorkersOfUnit> wou = new List<WorkersOfUnit>()
+        {
+            new WorkersOfUnit(1,1),
+            new WorkersOfUnit(2,2),
+            new WorkersOfUnit(3,3),
+            new WorkersOfUnit(4,4),
+            new WorkersOfUnit(5,5),
+            new WorkersOfUnit(6,6),
+        };
