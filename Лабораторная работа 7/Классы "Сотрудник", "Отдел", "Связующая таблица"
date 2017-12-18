@@ -1,0 +1,42 @@
+public class Worker
+        {
+            public int id;
+            public string name;
+            public int unit_id;
+
+            public Worker(int i, string n, int u_id)
+            {
+                this.id = i;
+                this.name = n;
+                this.unit_id = u_id;
+            }
+            public override string ToString()
+            {
+                return "(id=" + this.id.ToString() + "; name=" + this.name + "; place id=" + this.unit_id + ")";
+            }
+        }
+         public class Unit
+        {
+            public int id;
+            public string name;
+
+            public Unit(int i, string n)
+            {
+                this.id = i;
+                this.name = n;
+            }
+            public override string ToString()
+            {
+                return "(id=" + this.id.ToString() + "; name=" + this.name + ")";
+            }
+        }
+        public class WorkersOfUnit
+        {
+            public int worker;
+            public int unit;
+            public WorkersOfUnit(int i1, int i2)
+            {
+                this.worker = i1;
+                this.unit = i2;
+            }
+        }
